@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS "food";
+DROP TABLE IF EXISTS "user";
