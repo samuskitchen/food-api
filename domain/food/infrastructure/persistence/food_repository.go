@@ -28,7 +28,7 @@ func (sr *sqlFoodRepo) SaveFood(ctx context.Context, food *model.Food) (*respons
 	}
 
 	defer stmt.Close()
-	row := stmt.QueryRowContext(ctx, food.UserID, food.Title, food.Description, food.FoodImage, now, now)
+	row := stmt.QueryRowContext(ctx, &food.UserID, &food.Title, &food.Description, &food.FoodImage, now, now)
 
 	foodResponse := response.FoodResponse{}
 	err = row.Scan(&foodResponse.ID, &foodResponse.UserID, &foodResponse.Title, &foodResponse.Description, &foodResponse.FoodImage)

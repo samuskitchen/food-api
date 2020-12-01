@@ -3,7 +3,7 @@ package persistence
 const(
 
 	// selectAllFood is a query that selects all rows in the food table
-	selectAllFood = "SELECT id, user_id, title, description, food_image, created_at, updated_at FROM food WHERE deleted_at IS NULL;"
+	selectAllFood = "SELECT id, user_id, title, description, food_image, created_at, updated_at FROM food WHERE deleted_at IS NULL ORDER BY created_at DESC;"
 
 	// selectFoodById is a query that selects a row from the food table based off of the given id.
 	selectFoodById = "SELECT id, user_id, title, description, food_image, created_at, updated_at FROM food WHERE id = $1;"

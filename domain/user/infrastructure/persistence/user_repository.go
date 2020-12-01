@@ -49,7 +49,7 @@ func (sr *sqlUserRepo) GetById(ctx context.Context, id string) (response.UserRes
 	return userScan, nil
 }
 
-func (sr *sqlUserRepo) CreateUser(ctx context.Context, user model.User) (response.UserResponse, error) {
+func (sr *sqlUserRepo) CreateUser(ctx context.Context, user *model.User) (response.UserResponse, error) {
 	now := time.Now() //.Truncate(time.Second).Truncate(time.Millisecond).Truncate(time.Microsecond)
 
 	stmt, err := sr.Conn.DB.PrepareContext(ctx, insertUser)
@@ -59,7 +59,7 @@ func (sr *sqlUserRepo) CreateUser(ctx context.Context, user model.User) (respons
 
 	defer stmt.Close()
 
-	row := stmt.QueryRowContext(ctx, user.Names, user.LastNames, user.Email, user.Password, now, now)
+	row := stmt.QueryRowContext(ctx, &user.Names, &user.LastNames, &user.Email, &user.Password, now, now)
 
 	userResponse := response.UserResponse{}
 	err = row.Scan(&userResponse.ID, &userResponse.Names, &userResponse.LastNames, &userResponse.Email)

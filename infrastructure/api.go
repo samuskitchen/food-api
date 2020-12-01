@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"food-api/infrastructure/database"
 	"log"
+	"os"
 )
 
 func Start(port string) {
@@ -17,7 +18,17 @@ func Start(port string) {
 		log.Fatal(err)
 	}
 
-	server := newServer(port, db)
+	//redis details
+	redisHost := os.Getenv("REDIS_HOST")
+	redisPort := os.Getenv("REDIS_PORT")
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+
+	redis, err := database.NewRedisDB(redisHost, redisPort, redisPassword)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	server := newServer(port, db, redis)
 
 	// start the server.
 	server.Start()

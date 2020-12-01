@@ -4,8 +4,8 @@ import (
 	"context"
 	"food-api/infrastructure/database"
 	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
-	"github.com/go-chi/cors"
+	chiMiddleware "github.com/go-chi/chi/middleware"
+	"food-api/infrastructure/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -24,30 +24,22 @@ func (srv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // NewServerTest initialized a Routes Server with configuration for tests.
-func NewServerTest(port string, conn *database.Data) *Server {
-	return newServer(port, conn)
+func NewServerTest(port string, conn *database.Data, redis *database.RedisService) *Server {
+	return newServer(port, conn, redis)
 }
 
 // newServer initialized a Routes Server with configuration.
-func newServer(port string, conn *database.Data) *Server {
+func newServer(port string, conn *database.Data, redis *database.RedisService) *Server {
 
 	router := chi.NewRouter()
 
-	router.Use(middleware.RequestID)
-	router.Use(middleware.RealIP)
-	router.Use(middleware.Logger)
-	router.Use(middleware.Recoverer)
+	router.Use(chiMiddleware.RequestID)
+	router.Use(chiMiddleware.RealIP)
+	router.Use(chiMiddleware.Logger)
+	router.Use(chiMiddleware.Recoverer)
+	router.Use(middleware.CORSMiddleware)
 
-	// Basic CORS Support
-	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"localhost"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: false,
-		MaxAge:           300, // Maximum value not ignored by any of major browsers
-	}))
-
+	router.Mount("/api", RoutesLogin(conn, redis))
 	router.Mount("/api/v1", Routes(conn))
 
 	s := &http.Server{

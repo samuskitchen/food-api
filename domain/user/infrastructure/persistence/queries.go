@@ -3,7 +3,7 @@ package persistence
 const(
 
 	// selectAllUser is a query that selects all rows in the user table
-	selectAllUser = "SELECT id, names, last_names, email, created_at, updated_at FROM user WHERE deleted_at IS NULL;"
+	selectAllUser = "SELECT id, names, last_names, email, created_at, updated_at FROM user WHERE deleted_at IS NULL ORDER BY created_at DESC;"
 
 	// selectUserById is a query that selects a row from the user table based off of the given id.
 	selectUserById = "SELECT id, names, last_names, email, created_at, updated_at FROM user WHERE id = $1;"
