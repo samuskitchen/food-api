@@ -13,6 +13,7 @@ type User struct {
 	LastNames    string     `json:"last_names,omitempty"`
 	Email        string     `json:"email,omitempty"`
 	Password     string     `json:"password,omitempty"`
+	PasswordHash string     `json:"-"`
 	CreatedAt    time.Time  `json:"created_at,omitempty"`
 	UpdatedAt    time.Time  `json:"updated_at,omitempty"`
 	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
@@ -25,14 +26,14 @@ func (u *User) HashPassword() error {
 		return err
 	}
 
-	u.Password = string(passwordHash)
+	u.PasswordHash = string(passwordHash)
 
 	return nil
 }
 
 // PasswordMatch compares HashPassword with the password and returns true if they match.
 func (u User) PasswordMatch(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(password))
 
 	return err == nil
 }

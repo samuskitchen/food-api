@@ -2,6 +2,7 @@ package application
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"food-api/domain/user/domain/model"
 	repoDomain "food-api/domain/user/domain/respository"
@@ -36,6 +37,11 @@ func (lr *LoginRouter) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
+		_ = middleware.HTTPError(w, r, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	if err := user.HashPassword(); err != nil {
 		_ = middleware.HTTPError(w, r, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -123,7 +129,7 @@ func (lr *LoginRouter) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 		refreshUuid, ok := claims["refresh_uuid"].(string) //convert the interface to string
 
 		if !ok {
-			_ = middleware.HTTPError(w, r, http.StatusUnprocessableEntity, "Cannot get uuid")
+			_ = middleware.HTTPError(w, r, http.StatusUnprocessableEntity, errors.New("cannot get uuid").Error())
 			return
 		}
 
@@ -133,7 +139,7 @@ func (lr *LoginRouter) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 		delErr := lr.Redis.Auth.DeleteRefresh(ctx, refreshUuid)
 		if delErr != nil {
 			//if any goes wrong
-			_ = middleware.HTTPError(w, r, http.StatusUnauthorized, "unauthorized")
+			_ = middleware.HTTPError(w, r, http.StatusUnauthorized, errors.New("unauthorized").Error())
 			return
 		}
 
@@ -156,6 +162,6 @@ func (lr *LoginRouter) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 
 		_ = middleware.JSON(w, r, http.StatusOK, dataLogin)
 	} else {
-		_ = middleware.HTTPError(w, r, http.StatusUnauthorized, "refresh token expired")
+		_ = middleware.HTTPError(w, r, http.StatusUnauthorized, errors.New("refresh token expired").Error())
 	}
 }

@@ -2,10 +2,12 @@ package persistence
 
 import (
 	"context"
+	"errors"
 	"food-api/domain/user/application/v1/response"
 	"food-api/domain/user/domain/model"
 	repoDomain "food-api/domain/user/domain/respository"
 	"food-api/infrastructure/database"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -49,25 +51,25 @@ func (sr *sqlUserRepo) GetById(ctx context.Context, id string) (response.UserRes
 	return userScan, nil
 }
 
-func (sr *sqlUserRepo) CreateUser(ctx context.Context, user *model.User) (response.UserResponse, error) {
+func (sr *sqlUserRepo) CreateUser(ctx context.Context, user *model.User) (*response.UserResponse, error) {
 	now := time.Now() //.Truncate(time.Second).Truncate(time.Millisecond).Truncate(time.Microsecond)
 
 	stmt, err := sr.Conn.DB.PrepareContext(ctx, insertUser)
 	if err != nil {
-		return response.UserResponse{}, err
+		return &response.UserResponse{}, err
 	}
 
 	defer stmt.Close()
 
-	row := stmt.QueryRowContext(ctx, &user.Names, &user.LastNames, &user.Email, &user.Password, now, now)
+	row := stmt.QueryRowContext(ctx, uuid.New().String(), &user.Names, &user.LastNames, &user.Email, &user.PasswordHash, now, now)
 
-	userResponse := response.UserResponse{}
-	err = row.Scan(&userResponse.ID, &userResponse.Names, &userResponse.LastNames, &userResponse.Email)
+	userResult := response.UserResponse{}
+	err = row.Scan(&userResult.ID, &userResult.Names, &userResult.LastNames, &userResult.Email)
 	if err != nil {
-		return response.UserResponse{}, err
+		return &response.UserResponse{}, err
 	}
 
-	return userResponse, nil
+	return &userResult, nil
 }
 
 func (sr *sqlUserRepo) UpdateUser(ctx context.Context, id string, user model.User) error {
@@ -89,13 +91,25 @@ func (sr *sqlUserRepo) UpdateUser(ctx context.Context, id string, user model.Use
 }
 
 func (sr *sqlUserRepo) GetUserByEmailAndPassword(ctx context.Context, user *model.User) (*response.UserResponse, error) {
-	row := sr.Conn.DB.QueryRowContext(ctx, selectUserByEmailAndPassWord, user.Email, user.Password)
+	row := sr.Conn.DB.QueryRowContext(ctx, selectUserByEmail, user.Email)
 
-	var userScan response.UserResponse
-	err := row.Scan(&userScan.ID, &userScan.Names, &userScan.LastNames, &userScan.Email)
+	userScan := model.User{}
+	err := row.Scan(&userScan.ID, &userScan.Names, &userScan.LastNames, &userScan.Email, &userScan.PasswordHash, &userScan.CreatedAt, &userScan.UpdatedAt)
 	if err != nil {
 		return &response.UserResponse{}, err
 	}
 
-	return &userScan, nil
+	validate := userScan.PasswordMatch(user.Password)
+	if !validate {
+		return &response.UserResponse{}, errors.New("password does not match")
+	}
+
+	userResponse := response.UserResponse{
+		ID:        userScan.ID,
+		Names:     userScan.Names,
+		LastNames: userScan.LastNames,
+		Email:     userScan.Email,
+	}
+
+	return &userResponse, nil
 }
