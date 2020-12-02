@@ -17,10 +17,10 @@ CREATE TABLE IF NOT EXISTS "food" (
     user_id uuid NOT NULL,
     title character varying(150) NOT NULL,
     description character varying(250) NOT NULL,
-    food_image character varying(300) NOT NULL,
+    food_image character varying(300),
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    deleted_at time with time zone NOT NULL,
+    deleted_at time with time zone,
     PRIMARY KEY (id),
     CONSTRAINT fk_user FOREIGN KEY (user_id)
         REFERENCES "user" (id) MATCH SIMPLE

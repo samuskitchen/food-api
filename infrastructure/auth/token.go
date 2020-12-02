@@ -78,12 +78,14 @@ func (t *Token) ExtractTokenMetadata(r *http.Request) (*model.AccessDetails, err
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
 		accessUuid, ok := claims["access_uuid"].(string)
-
 		if !ok {
 			return nil, err
 		}
 
-		userId := fmt.Sprintf("%.f", claims["user_id"])
+		userId, ok := claims["user_id"].(string)
+		if !ok {
+			return nil, err
+		}
 
 		accessDetail := &model.AccessDetails{
 			TokenUuid: accessUuid,

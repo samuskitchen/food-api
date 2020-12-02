@@ -3,7 +3,6 @@ package application
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"food-api/domain/user/domain/model"
 	repoDomain "food-api/domain/user/domain/respository"
 	"food-api/domain/user/infrastructure/persistence"
@@ -127,13 +126,16 @@ func (lr *LoginRouter) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	claims, ok := refreshToken.Claims.(jwt.MapClaims)
 	if ok && refreshToken.Valid {
 		refreshUuid, ok := claims["refresh_uuid"].(string) //convert the interface to string
-
 		if !ok {
 			_ = middleware.HTTPError(w, r, http.StatusUnprocessableEntity, errors.New("cannot get uuid").Error())
 			return
 		}
 
-		userId := fmt.Sprintf("%.f", claims["user_id"])
+		userId, ok := claims["user_id"].(string) //convert the interface to string
+		if !ok {
+			_ = middleware.HTTPError(w, r, http.StatusUnprocessableEntity, errors.New("cannot get user id").Error())
+			return
+		}
 
 		//Delete the previous RefreshHandler Token
 		delErr := lr.Redis.Auth.DeleteRefresh(ctx, refreshUuid)
