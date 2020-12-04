@@ -5,10 +5,10 @@ import (
 	"errors"
 	"food-api/domain/user/application/v1/response"
 	"food-api/domain/user/domain/model"
-	repoDomain "food-api/domain/user/domain/respository"
+	repoDomain "food-api/domain/user/domain/repository"
 	"food-api/infrastructure/database"
 	"github.com/google/uuid"
-	"time"
+	"strings"
 )
 
 type sqlUserRepo struct {
@@ -52,16 +52,17 @@ func (sr *sqlUserRepo) GetById(ctx context.Context, id string) (response.UserRes
 }
 
 func (sr *sqlUserRepo) CreateUser(ctx context.Context, user *model.User) (*response.UserResponse, error) {
-	now := time.Now() //.Truncate(time.Second).Truncate(time.Millisecond).Truncate(time.Microsecond)
-
 	stmt, err := sr.Conn.DB.PrepareContext(ctx, insertUser)
 	if err != nil {
 		return &response.UserResponse{}, err
 	}
 
 	defer stmt.Close()
+	if strings.TrimSpace(user.ID) == "" {
+		user.ID = uuid.New().String()
+	}
 
-	row := stmt.QueryRowContext(ctx, uuid.New().String(), &user.Names, &user.LastNames, &user.Email, &user.PasswordHash, now, now)
+	row := stmt.QueryRowContext(ctx, &user.ID, &user.Names, &user.LastNames, &user.Email, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt)
 
 	userResult := response.UserResponse{}
 	err = row.Scan(&userResult.ID, &userResult.Names, &userResult.LastNames, &userResult.Email)
@@ -73,8 +74,6 @@ func (sr *sqlUserRepo) CreateUser(ctx context.Context, user *model.User) (*respo
 }
 
 func (sr *sqlUserRepo) UpdateUser(ctx context.Context, id string, user model.User) error {
-	now := time.Now() //.Truncate(time.Second).Truncate(time.Millisecond).Truncate(time.Microsecond)
-
 	stmt, err := sr.Conn.DB.PrepareContext(ctx, updateUser)
 	if err != nil {
 		return err
@@ -82,7 +81,7 @@ func (sr *sqlUserRepo) UpdateUser(ctx context.Context, id string, user model.Use
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, user.Names, user.LastNames, user.Email, now, id)
+	_, err = stmt.ExecContext(ctx, user.Names, user.LastNames, user.Email, user.UpdatedAt, id)
 	if err != nil {
 		return err
 	}

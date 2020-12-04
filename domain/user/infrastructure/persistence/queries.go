@@ -6,7 +6,7 @@ const(
 	selectAllUser = "SELECT id, names, last_names, email FROM \"user\" WHERE deleted_at IS NULL ORDER BY created_at DESC;"
 
 	// selectUserById is a query that selects a row from the user table based off of the given id.
-	selectUserById = "SELECT id, names, last_names, email, created_at, updated_at FROM \"user\" WHERE id = $1;"
+	selectUserById = "SELECT id, names, last_names, email FROM \"user\" WHERE id = $1;"
 
 	// selectUserByEmail is a query that selects a row from the user table based off of the given email.
 	selectUserByEmail = "SELECT id, names, last_names, email, \"password\", created_at, updated_at FROM \"user\" WHERE email = $1;"

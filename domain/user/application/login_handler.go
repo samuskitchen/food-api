@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"food-api/domain/user/domain/model"
-	repoDomain "food-api/domain/user/domain/respository"
+	repoDomain "food-api/domain/user/domain/repository"
 	"food-api/domain/user/infrastructure/persistence"
 	"food-api/infrastructure/auth"
 	authModel "food-api/infrastructure/auth/model"

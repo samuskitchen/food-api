@@ -4,10 +4,9 @@ import (
 	"context"
 	"food-api/domain/food/application/v1/response"
 	"food-api/domain/food/domain/model"
-	repoDomain "food-api/domain/food/domain/respository"
+	repoDomain "food-api/domain/food/domain/repository"
 	"food-api/infrastructure/database"
 	"github.com/google/uuid"
-	"time"
 )
 
 type sqlFoodRepo struct {
@@ -67,15 +66,13 @@ func (sr *sqlFoodRepo) GetAllFood(ctx context.Context) ([]response.FoodResponse,
 
 // SaveFood
 func (sr *sqlFoodRepo) SaveFood(ctx context.Context, food *model.Food) (*response.FoodResponse, error) {
-	now := time.Now() //.Truncate(time.Second).Truncate(time.Millisecond).Truncate(time.Microsecond)
-
 	stmt, err := sr.Conn.DB.PrepareContext(ctx, insertFood)
 	if err != nil {
 		return &response.FoodResponse{}, err
 	}
 
 	defer stmt.Close()
-	row := stmt.QueryRowContext(ctx, uuid.New().String(), &food.UserID, &food.Title, &food.Description, &food.FoodImage, now, now)
+	row := stmt.QueryRowContext(ctx, uuid.New().String(), &food.UserID, &food.Title, &food.Description, &food.FoodImage, &food.CreatedAt, &food.UpdatedAt)
 
 	foodResult := response.FoodResponse{}
 	err = row.Scan(&foodResult.ID, &foodResult.UserID, &foodResult.Title, &foodResult.Description, &foodResult.FoodImage)
@@ -88,8 +85,6 @@ func (sr *sqlFoodRepo) SaveFood(ctx context.Context, food *model.Food) (*respons
 
 // UpdateFood
 func (sr *sqlFoodRepo) UpdateFood(ctx context.Context, id string, food *model.Food) error {
-	now := time.Now() //.Truncate(time.Second).Truncate(time.Millisecond).Truncate(time.Microsecond)
-
 	stmt, err := sr.Conn.DB.PrepareContext(ctx, updateFood)
 	if err != nil {
 		return err
@@ -97,7 +92,7 @@ func (sr *sqlFoodRepo) UpdateFood(ctx context.Context, id string, food *model.Fo
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, food.Title, food.Description, food.FoodImage, now, id)
+	_, err = stmt.ExecContext(ctx, food.Title, food.Description, food.FoodImage, food.UpdatedAt, id)
 	if err != nil {
 		return err
 	}

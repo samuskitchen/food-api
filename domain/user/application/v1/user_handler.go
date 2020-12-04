@@ -2,15 +2,17 @@ package v1
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"food-api/domain/user/application/v1/response"
 	"food-api/domain/user/domain/model"
-	repoDomain "food-api/domain/user/domain/respository"
+	repoDomain "food-api/domain/user/domain/repository"
 	"food-api/domain/user/infrastructure/persistence"
 	"food-api/infrastructure/database"
 	"food-api/infrastructure/middleware"
 	"github.com/go-chi/chi"
 	"net/http"
+	"time"
 )
 
 // UserRouter
@@ -41,6 +43,10 @@ func (ur *UserRouter) GetAllUser(w http.ResponseWriter, r *http.Request) {
 // GetOneHandler response one user by id.
 func (ur *UserRouter) GetOneHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	if id == "" {
+		_ = middleware.HTTPError(w, r, http.StatusBadRequest, errors.New("cannot get id").Error())
+		return
+	}
 
 	ctx := r.Context()
 	userResult, err := ur.Repo.GetById(ctx, id)
@@ -54,7 +60,9 @@ func (ur *UserRouter) GetOneHandler(w http.ResponseWriter, r *http.Request) {
 
 // CreateHandler Create a new user.
 func (ur *UserRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
+	var now time.Time
 	var user model.User
+
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		_ = middleware.HTTPError(w, r, http.StatusUnprocessableEntity, err.Error())
@@ -73,7 +81,11 @@ func (ur *UserRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
 	ctx := r.Context()
+	user.CreatedAt = now
+	user.UpdatedAt = now
+
 	result, err := ur.Repo.CreateUser(ctx, &user)
 	if err != nil {
 		_ = middleware.HTTPError(w, r, http.StatusConflict, err.Error())
@@ -86,7 +98,13 @@ func (ur *UserRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 // UpdateHandler update a stored user by id.
 func (ur *UserRouter) UpdateHandler(w http.ResponseWriter, r *http.Request) {
+	var now time.Time
 	id := chi.URLParam(r, "id")
+
+	if id == "" {
+		_ = middleware.HTTPError(w, r, http.StatusBadRequest, errors.New("cannot get id").Error())
+		return
+	}
 
 	var userUpdate model.User
 	err := json.NewDecoder(r.Body).Decode(&userUpdate)
@@ -103,6 +121,8 @@ func (ur *UserRouter) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
+	userUpdate.UpdatedAt = now
+
 	err = ur.Repo.UpdateUser(ctx, id, userUpdate)
 	if err != nil {
 		_ = middleware.HTTPError(w, r, http.StatusConflict, err.Error())

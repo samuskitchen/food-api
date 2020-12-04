@@ -62,7 +62,7 @@ func (f fileUpload) UploadFile(file *multipart.FileHeader) (string, error) {
 	path := "/profile-photos/" + filePath
 
 	params := &s3.PutObjectInput{
-		Bucket:        aws.String("chodapi"), //this is the name i saved the bucket that contains the image
+		Bucket:        aws.String("food_api"), //this is the name i saved the bucket that contains the image
 		Key:           aws.String(path),
 		Body:          fileBytes,
 		ContentLength: aws.Int64(size),

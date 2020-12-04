@@ -2,15 +2,17 @@ package v1
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"food-api/domain/food/application/v1/response"
 	"food-api/domain/food/domain/model"
-	repoDomain "food-api/domain/food/domain/respository"
+	repoDomain "food-api/domain/food/domain/repository"
 	"food-api/domain/food/infrastructure/persistence"
 	"food-api/infrastructure/database"
 	"food-api/infrastructure/middleware"
 	"github.com/go-chi/chi"
 	"net/http"
+	"time"
 )
 
 // FoodRouter
@@ -40,6 +42,10 @@ func (ur *FoodRouter) GetAllFood(w http.ResponseWriter, r *http.Request) {
 // GetOneHandler response one food by id.
 func (ur *FoodRouter) GetOneHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	if id == "" {
+		_ = middleware.HTTPError(w, r, http.StatusBadRequest, errors.New("cannot get id").Error())
+		return
+	}
 
 	ctx := r.Context()
 	userResult, err := ur.Repo.GetFoodById(ctx, id)
@@ -54,6 +60,10 @@ func (ur *FoodRouter) GetOneHandler(w http.ResponseWriter, r *http.Request) {
 // GetOneByUserHandler response one food by user id.
 func (ur *FoodRouter) GetOneByUserHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	if id == "" {
+		_ = middleware.HTTPError(w, r, http.StatusBadRequest, errors.New("cannot get id").Error())
+		return
+	}
 
 	ctx := r.Context()
 	userResult, err := ur.Repo.GetFoodByUserId(ctx, id)
@@ -67,7 +77,9 @@ func (ur *FoodRouter) GetOneByUserHandler(w http.ResponseWriter, r *http.Request
 
 // CreateHandler Create a new food.
 func (ur *FoodRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
+	var now time.Time
 	var food model.Food
+
 	err := json.NewDecoder(r.Body).Decode(&food)
 	if err != nil {
 		_ = middleware.HTTPError(w, r, http.StatusBadRequest, err.Error())
@@ -82,6 +94,9 @@ func (ur *FoodRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
+	food.CreatedAt = now
+	food.UpdatedAt = now
+
 	result, err := ur.Repo.SaveFood(ctx, &food)
 	if err != nil {
 		_ = middleware.HTTPError(w, r, http.StatusConflict, err.Error())
@@ -94,7 +109,12 @@ func (ur *FoodRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 // UpdateHandler update a stored food by id.
 func (ur *FoodRouter) UpdateHandler(w http.ResponseWriter, r *http.Request) {
+	var now time.Time
 	id := chi.URLParam(r, "id")
+	if id == "" {
+		_ = middleware.HTTPError(w, r, http.StatusBadRequest, errors.New("cannot get id").Error())
+		return
+	}
 
 	var foodUpdate model.Food
 	err := json.NewDecoder(r.Body).Decode(&foodUpdate)
@@ -111,6 +131,8 @@ func (ur *FoodRouter) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
+	foodUpdate.UpdatedAt = now
+
 	err = ur.Repo.UpdateFood(ctx, id, &foodUpdate)
 	if err != nil {
 		_ = middleware.HTTPError(w, r, http.StatusConflict, err.Error())
@@ -131,6 +153,10 @@ func (ur *FoodRouter) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 // DeleteHandler Remove a food by ID.
 func (ur *FoodRouter) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	if id == "" {
+		_ = middleware.HTTPError(w, r, http.StatusBadRequest, errors.New("cannot get id").Error())
+		return
+	}
 
 	ctx := r.Context()
 	err := ur.Repo.DeleteFood(ctx, id)

@@ -82,11 +82,11 @@ func (u *User) Validate(action string) map[string]string {
 
 	default:
 		if u.Names == "" {
-			errorMessages["firstname_required"] = "names is required"
+			errorMessages["names_required"] = "names is required"
 		}
 
 		if u.LastNames == "" {
-			errorMessages["lastname_required"] = "last names is required"
+			errorMessages["lastnames_required"] = "last names is required"
 		}
 
 		if u.Password == "" {
