@@ -7,6 +7,7 @@ import (
 	repoDomain "food-api/domain/food/domain/repository"
 	"food-api/infrastructure/database"
 	"github.com/google/uuid"
+	"strings"
 )
 
 type sqlFoodRepo struct {
@@ -72,7 +73,11 @@ func (sr *sqlFoodRepo) SaveFood(ctx context.Context, food *model.Food) (*respons
 	}
 
 	defer stmt.Close()
-	row := stmt.QueryRowContext(ctx, uuid.New().String(), &food.UserID, &food.Title, &food.Description, &food.FoodImage, &food.CreatedAt, &food.UpdatedAt)
+	if strings.TrimSpace(food.ID) == "" {
+		food.ID = uuid.New().String()
+	}
+
+	row := stmt.QueryRowContext(ctx, &food.ID, &food.UserID, &food.Title, &food.Description, &food.FoodImage, &food.CreatedAt, &food.UpdatedAt)
 
 	foodResult := response.FoodResponse{}
 	err = row.Scan(&foodResult.ID, &foodResult.UserID, &foodResult.Title, &foodResult.Description, &foodResult.FoodImage)

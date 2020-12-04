@@ -207,6 +207,7 @@ func Test_sqlFoodRepo_GetFoodByUserId(t *testing.T) {
 		defer func() {
 			CloseMockFood()
 		}()
+
 		row := sqlmock.NewRows([]string{"id", "user_id", "title", "description", "food_image"}).
 			AddRow(foodTest.ID, foodTest.UserID, foodTest.Title, foodTest.Description, foodTest.FoodImage)
 
@@ -223,12 +224,181 @@ func Test_sqlFoodRepo_GetFoodByUserId(t *testing.T) {
 
 func Test_sqlFoodRepo_SaveFood(t *testing.T) {
 
+	t.Run("Error SQL", func(tt *testing.T) {
+		mock := NewMockFood()
+		defer func() {
+			CloseMockFood()
+		}()
+
+		prep := mock.ExpectPrepare("insertFoodTest")
+		prep.ExpectExec().
+			WithArgs(dataFood()[0].ID, dataFood()[0].UserID, dataFood()[0].Title, dataFood()[0].Description, dataFood()[0].FoodImage, dataFood()[0].CreatedAt, dataFood()[0].UpdatedAt).
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		foodResult, err := foodRepositoryMock.SaveFood(ctx, &dataFood()[0])
+		assert.Error(tt, err)
+		assert.NotNil(tt, foodResult)
+	})
+
+	t.Run("Error Scan Row", func(tt *testing.T) {
+		mock := NewMockFood()
+		defer func() {
+			CloseMockFood()
+		}()
+
+		prep := mock.ExpectPrepare(insertFoodTest)
+		prep.ExpectQuery().
+			WithArgs(dataFood()[0].ID, dataFood()[0].UserID, dataFood()[0].Title, dataFood()[0].Description, dataFood()[0].FoodImage, dataFood()[0].CreatedAt, dataFood()[0].UpdatedAt).
+			WillReturnRows(sqlmock.NewRows([]string{"first_name"}).AddRow("Error"))
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		foodResult, err := foodRepositoryMock.SaveFood(ctx, &dataFood()[0])
+		assert.Error(tt, err)
+		assert.NotNil(tt, foodResult)
+	})
+
+	t.Run("Create Food Successful", func(tt *testing.T) {
+		mock := NewMockFood()
+		defer func() {
+			CloseMockFood()
+		}()
+
+		dataTest := dataFood()[0]
+		prep := mock.ExpectPrepare(insertFoodTest)
+		prep.ExpectQuery().
+			WithArgs(dataTest.ID, dataTest.UserID, dataTest.Title, dataTest.Description, dataTest.FoodImage, dataTest.CreatedAt, dataTest.UpdatedAt).
+			WillReturnRows(sqlmock.NewRows([]string{"id", "user_id", "title", "description", "food_image"}).
+				AddRow(dataTest.ID, dataTest.UserID, dataTest.Title, dataTest.Description, dataTest.FoodImage))
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		foodResult, err := foodRepositoryMock.SaveFood(ctx, &dataTest)
+		assert.NoError(tt, err)
+		assert.NotNil(tt, foodResult)
+	})
 }
 
 func Test_sqlFoodRepo_UpdateFood(t *testing.T) {
 
+	t.Run("Error SQL", func(tt *testing.T) {
+		mock := NewMockFood()
+		defer func() {
+			CloseMockFood()
+		}()
+
+		prep := mock.ExpectPrepare("updateFoodTest")
+		prep.ExpectExec().
+			WithArgs(dataFood()[0].Title, dataFood()[0].Description, dataFood()[0].FoodImage, dataFood()[0].UpdatedAt, dataFood()[0].ID).
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		err := foodRepositoryMock.UpdateFood(ctx, dataFood()[0].ID, &dataFood()[0])
+		assert.Error(tt, err)
+	})
+
+	t.Run("Error Statement SQL", func(tt *testing.T) {
+		mock := NewMockFood()
+		defer func() {
+			CloseMockFood()
+		}()
+
+		prep := mock.ExpectPrepare(updateFoodTest)
+		prep.ExpectExec().
+			WithArgs(dataFood()[0].Title, dataFood()[0].Description, dataFood()[0].FoodImage, dataFood()[0].UpdatedAt, nil).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		err := foodRepositoryMock.UpdateFood(ctx, dataFood()[0].ID, &dataFood()[0])
+		assert.Error(tt, err)
+	})
+
+	t.Run("Update Food Successful", func(tt *testing.T) {
+		mock := NewMockFood()
+		defer func() {
+			CloseMockFood()
+		}()
+
+		dataTest := dataFood()[0]
+		prep := mock.ExpectPrepare(updateFoodTest)
+		prep.ExpectExec().
+			WithArgs(dataTest.Title, dataTest.Description, dataTest.FoodImage, dataTest.UpdatedAt, dataTest.ID).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		err := foodRepositoryMock.UpdateFood(ctx, dataTest.ID, &dataTest)
+		assert.NoError(tt, err)
+	})
+
 }
 
 func Test_sqlFoodRepo_DeleteFood(t *testing.T) {
+
+	t.Run("Error SQL", func(tt *testing.T) {
+		mock := NewMockFood()
+		defer func() {
+			CloseMockFood()
+		}()
+
+		prep := mock.ExpectPrepare("deleteFoodTest")
+		prep.ExpectExec().
+			WithArgs(uint(1)).
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		err := foodRepositoryMock.DeleteFood(ctx, "")
+		assert.Error(tt, err)
+	})
+
+	t.Run("Error Statement SQL", func(tt *testing.T) {
+		mock := NewMockFood()
+		defer func() {
+			CloseMockFood()
+		}()
+
+		prep := mock.ExpectPrepare(deleteFoodTest)
+		prep.ExpectExec().
+			WithArgs(nil).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		err := foodRepositoryMock.DeleteFood(ctx, "")
+		assert.Error(tt, err)
+	})
+
+	t.Run("Delete Food Successful", func(tt *testing.T) {
+		mock := NewMockFood()
+		defer func() {
+			CloseMockFood()
+		}()
+
+		userID := dataFood()[0].ID
+
+		prep := mock.ExpectPrepare(deleteFoodTest)
+		prep.ExpectExec().
+			WithArgs(userID).
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		err := foodRepositoryMock.DeleteFood(ctx, userID)
+		assert.NoError(tt, err)
+	})
 
 }
