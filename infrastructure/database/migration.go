@@ -13,7 +13,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func VersionedDB(db *Data) error {
+func VersionedDB(db *Data, test bool) error {
 
 	err := db.DB.Ping()
 	if err != nil {
@@ -32,7 +32,7 @@ func VersionedDB(db *Data) error {
 		log.Fatal(errConfig)
 	}
 
-	version, errVersion := migrationUp(instanceConfig)
+	version, errVersion := migrationUp(instanceConfig, test)
 	if errVersion != nil {
 		if strings.Contains(errVersion.Error(), "no change") {
 			errVersion = nil
@@ -42,8 +42,12 @@ func VersionedDB(db *Data) error {
 	}
 	return errVersion
 }
-func migrationUp(instanceConfig database.Driver) (int, error) {
+func migrationUp(instanceConfig database.Driver, test bool) (int, error) {
 	pathScripts := os.Getenv("SCRIPTS_PATH")
+	if test {
+		pathScripts = os.Getenv("SCRIPTS_PATH_TEST")
+	}
+
 	DBName := os.Getenv("DB_NAME")
 
 	migration, err := migrate.NewWithDatabaseInstance(

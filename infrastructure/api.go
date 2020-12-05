@@ -13,7 +13,7 @@ func Start(port string) {
 	defer db.DB.Close()
 
 	//Versioning the database
-	err := database.VersionedDB(db)
+	err := database.VersionedDB(db, false)
 	if err != nil {
 		log.Fatal(err)
 	}

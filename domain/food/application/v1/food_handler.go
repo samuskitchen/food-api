@@ -30,13 +30,18 @@ func NewFoodHandler(db *database.Data) *FoodRouter {
 func (ur *FoodRouter) GetAllFood(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	users, err := ur.Repo.GetAllFood(ctx)
+	foods, err := ur.Repo.GetAllFood(ctx)
 	if err != nil {
 		_ = middleware.HTTPError(w, r, http.StatusNotFound, err.Error())
 		return
 	}
 
-	_ = middleware.JSON(w, r, http.StatusOK, users)
+	if foods == nil {
+		_ = middleware.HTTPError(w, r, http.StatusNotFound, errors.New("foods not found").Error())
+		return
+	}
+
+	_ = middleware.JSON(w, r, http.StatusOK, foods)
 }
 
 // GetOneHandler response one food by id.

@@ -50,7 +50,7 @@ func CloseMockFood() {
 
 // dataFood is data for test
 func dataFood() []model.Food {
-	now := time.Now().Truncate(time.Second).Truncate(time.Millisecond).Truncate(time.Microsecond)
+	now := time.Now()
 	userId := uuid.New().String()
 
 	return []model.Food{

@@ -83,12 +83,12 @@ func getConnection() (*sql.DB, error) {
 }
 
 func getConnectionTest() (*sql.DB, error) {
-	DbHost := os.Getenv("DB_HOST")
-	DbDriver := os.Getenv("DB_DRIVER")
-	DbUser := os.Getenv("DB_USER")
-	DbPassword := os.Getenv("DB_PASSWORD")
-	DbName := os.Getenv("DB_NAME")
-	DbPort := os.Getenv("DB_PORT")
+	DbHost := os.Getenv("TEST_DB_HOST")
+	DbDriver := os.Getenv("TEST_DB_DRIVER")
+	DbUser := os.Getenv("TEST_DB_USER")
+	DbPassword := os.Getenv("TEST_DB_PASSWORD")
+	DbName := os.Getenv("TEST_DB_NAME")
+	DbPort := os.Getenv("TEST_DB_PORT")
 
 	uri := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
 	return sql.Open(DbDriver, uri)

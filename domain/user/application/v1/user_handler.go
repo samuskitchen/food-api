@@ -37,6 +37,11 @@ func (ur *UserRouter) GetAllUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if users == nil {
+		_ = middleware.HTTPError(w, r, http.StatusNotFound, errors.New("users not found").Error())
+		return
+	}
+
 	_ = middleware.JSON(w, r, http.StatusOK, users)
 }
 
