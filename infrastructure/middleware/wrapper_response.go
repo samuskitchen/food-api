@@ -11,8 +11,32 @@ type ErrorMessage struct {
 	Message string `json:"message"`
 }
 
+// SuccessfullyMessage structure that returns successfully
+type SuccessfullyMessage struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+}
+
+// ErrorMessage standardized error response.
+// swagger:response SwaggerErrorMessage
+type SwaggerErrorMessage struct {
+	// in: body
+	Body ErrorMessage
+}
+
+// SuccessfullyMessage structure that returns successfully
+// swagger:response SwaggerSuccessfullyMessage
+type SwaggerSuccessfullyMessage struct {
+	// in: body
+	Body SuccessfullyMessage
+}
+
 // Map is a convenient way to create objects of unknown types.
 type Map map[string]interface{}
+
+// Map is a convenient way to create objects of unknown types.
+// swagger:response SwaggerMap
+type SwaggerMap map[string]interface{}
 
 // JSON standardized JSON response.
 func JSON(w http.ResponseWriter, r *http.Request, statusCode int, data interface{}) error {
@@ -31,6 +55,16 @@ func JSON(w http.ResponseWriter, r *http.Request, statusCode int, data interface
 	w.WriteHeader(statusCode)
 	_, _ = w.Write(j)
 	return nil
+}
+
+// JSONMessages standardized successfully response in JSON format.
+func JSONMessages(w http.ResponseWriter, r *http.Request, statusCode int, message string) error {
+	msg := SuccessfullyMessage{
+		Status:  statusCode,
+		Message: message,
+	}
+
+	return JSON(w, r, statusCode, msg)
 }
 
 // HTTPError standardized error response in JSON format.

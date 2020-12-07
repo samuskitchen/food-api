@@ -30,6 +30,25 @@ func NewLoginHandler(db *database.Data, redis *database.RedisService, token auth
 	}
 }
 
+// swagger:route POST /login Auth userLoginRequest
+//
+// LoginHandler.
+// login to the app
+//
+//     consumes:
+//     - application/json
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerDataLogin
+//		  409: SwaggerErrorMessage
+//		  422: SwaggerErrorMessage
+//		  500: SwaggerErrorMessage
+//
 // LoginHandler
 func (lr *LoginRouter) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var user model.User
@@ -82,6 +101,20 @@ func (lr *LoginRouter) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	_ = middleware.JSON(w, r, http.StatusOK, userData)
 }
 
+// swagger:route POST /logout Auth authorization
+//
+// LogoutHandler.
+// logout to the app
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerSuccessfullyMessage
+//		  401: SwaggerErrorMessage
+//
 // LogoutHandler
 func (lr *LoginRouter) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -100,9 +133,28 @@ func (lr *LoginRouter) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = middleware.JSON(w, r, http.StatusOK, "Successfully logged out")
+	_ = middleware.JSONMessages(w, r, http.StatusOK, "Successfully logged out")
 }
 
+// swagger:route POST /refresh Auth refreshRequest
+//
+// RefreshHandler.
+// Is the function that uses the refresh_token to generate new pairs of refresh and access tokens
+//
+//     consumes:
+//     - application/json
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerDataLogin
+//		  401: SwaggerErrorMessage
+//		  403: SwaggerErrorMessage
+//		  422: SwaggerErrorMessage
+//
 // RefreshHandler is the function that uses the refresh_token to generate new pairs of refresh and access tokens.
 func (lr *LoginRouter) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	var dataLogin authModel.DataLogin

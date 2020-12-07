@@ -1,0 +1,905 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "The purpose of this application is to provide food service by users\n\n\nThis should show the struct of endpoints",
+    "title": "Food API.",
+    "contact": {
+      "url": "https://www.linkedin.com/in/daniel-de-la-pava-suarez/"
+    },
+    "version": "1.0.0"
+  },
+  "host": "localhost:8888",
+  "basePath": "/api/v1",
+  "paths": {
+    "/foods": {
+      "get": {
+        "description": "Response all the food",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Food"
+        ],
+        "summary": "GetAllFoodHandler.",
+        "operationId": "getAllFood",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerAllFoodResponse"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "404": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new food",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Food"
+        ],
+        "summary": "CreateHandler.",
+        "operationId": "foodRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Food"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/SwaggerFoodResponse"
+          },
+          "400": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "409": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "422": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      }
+    },
+    "/foods/user/{id}": {
+      "get": {
+        "description": "Response one food by user id",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Food"
+        ],
+        "summary": "GetOneByUserHandler.",
+        "operationId": "idFoodByUserPath",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "UserID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerFoodResponse"
+          },
+          "400": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "404": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      }
+    },
+    "/foods/{id}": {
+      "get": {
+        "description": "Response one food by id",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Food"
+        ],
+        "summary": "GetOneFoodHandler.",
+        "operationId": "idFoodPath",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerFoodResponse"
+          },
+          "400": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "404": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      },
+      "put": {
+        "description": "Update a stored food by id",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Food"
+        ],
+        "summary": "UpdateHandler.",
+        "operationId": "foodUpdateRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "title",
+                "description"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "x-go-name": "Description"
+                },
+                "food_image": {
+                  "type": "string",
+                  "x-go-name": "FoodImage"
+                },
+                "title": {
+                  "type": "string",
+                  "x-go-name": "Title"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerFoodResponse"
+          },
+          "400": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "409": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "422": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      },
+      "delete": {
+        "description": "Remove a food by id",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Food"
+        ],
+        "summary": "DeleteHandler.",
+        "operationId": "idFoodDeletePath",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerSuccessfullyMessage"
+          },
+          "400": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "404": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "login to the app",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Auth"
+        ],
+        "summary": "LoginHandler.",
+        "operationId": "userLoginRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "password"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "x-go-name": "Email"
+                },
+                "password": {
+                  "type": "string",
+                  "x-go-name": "Password"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerDataLogin"
+          },
+          "409": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "422": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "500": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "description": "logout to the app",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Auth"
+        ],
+        "summary": "LogoutHandler.",
+        "operationId": "authorization",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerSuccessfullyMessage"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      }
+    },
+    "/refresh": {
+      "post": {
+        "description": "Is the function that uses the refresh_token to generate new pairs of refresh and access tokens",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "Auth"
+        ],
+        "summary": "RefreshHandler.",
+        "operationId": "refreshRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "access_token",
+                "refresh_token"
+              ],
+              "properties": {
+                "access_token": {
+                  "type": "string",
+                  "x-go-name": "AccessToken"
+                },
+                "refresh_token": {
+                  "type": "string",
+                  "x-go-name": "RefreshToken"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerDataLogin"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "403": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "422": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "description": "Returns all user in the database",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "GetAllUserHandler.",
+        "operationId": "getAllUser",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerAllUserResponse"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "404": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new user",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "CreateHandler.",
+        "operationId": "userRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/SwaggerUserResponse"
+          },
+          "400": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "409": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "422": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "Response one user by id",
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "GetOneHandler.",
+        "operationId": "idUserPath",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerUserResponse"
+          },
+          "400": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "404": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      },
+      "put": {
+        "description": "Update a stored user by id",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "User"
+        ],
+        "summary": "UpdateHandler.",
+        "operationId": "userUpdateRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "type: apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "required": [
+                "names",
+                "last_names",
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "x-go-name": "Email"
+                },
+                "last_names": {
+                  "type": "string",
+                  "x-go-name": "LastNames"
+                },
+                "names": {
+                  "type": "string",
+                  "x-go-name": "Names"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SwaggerUserResponse"
+          },
+          "400": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "401": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "409": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          },
+          "422": {
+            "$ref": "#/responses/SwaggerErrorMessage"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DataLogin": {
+      "description": "Data of DataLogin",
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string",
+          "x-go-name": "AccessToken"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "last_names": {
+          "type": "string",
+          "x-go-name": "LastNames"
+        },
+        "names": {
+          "type": "string",
+          "x-go-name": "Names"
+        },
+        "refresh_token": {
+          "type": "string",
+          "x-go-name": "RefreshToken"
+        }
+      },
+      "x-go-package": "food-api/infrastructure/auth/model"
+    },
+    "ErrorMessage": {
+      "description": "ErrorMessage structure that returns errors",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status"
+        }
+      },
+      "x-go-package": "food-api/infrastructure/middleware"
+    },
+    "Food": {
+      "description": "Data of Food",
+      "type": "object",
+      "required": [
+        "user_id",
+        "title",
+        "description"
+      ],
+      "properties": {
+        "description": {
+          "type": "string",
+          "x-go-name": "Description"
+        },
+        "food_image": {
+          "type": "string",
+          "x-go-name": "FoodImage"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        },
+        "user_id": {
+          "type": "string",
+          "x-go-name": "UserID"
+        }
+      },
+      "x-go-package": "food-api/domain/food/domain/model"
+    },
+    "FoodResponse": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "x-go-name": "Description"
+        },
+        "food_image": {
+          "type": "string",
+          "x-go-name": "FoodImage"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        },
+        "user_id": {
+          "type": "string",
+          "x-go-name": "UserID"
+        }
+      },
+      "x-go-package": "food-api/domain/food/application/v1/response"
+    },
+    "SuccessfullyMessage": {
+      "description": "SuccessfullyMessage structure that returns successfully",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status"
+        }
+      },
+      "x-go-package": "food-api/infrastructure/middleware"
+    },
+    "User": {
+      "description": "Data of User",
+      "type": "object",
+      "required": [
+        "names",
+        "last_names",
+        "email",
+        "password"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "last_names": {
+          "type": "string",
+          "x-go-name": "LastNames"
+        },
+        "names": {
+          "type": "string",
+          "x-go-name": "Names"
+        },
+        "password": {
+          "type": "string",
+          "x-go-name": "Password"
+        }
+      },
+      "x-go-package": "food-api/domain/user/domain/model"
+    },
+    "UserResponse": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "last_names": {
+          "type": "string",
+          "x-go-name": "LastNames"
+        },
+        "names": {
+          "type": "string",
+          "x-go-name": "Names"
+        }
+      },
+      "x-go-package": "food-api/domain/user/application/v1/response"
+    }
+  },
+  "responses": {
+    "SwaggerAllFoodResponse": {
+      "description": "FoodResponse It is the response of the all food information",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/FoodResponse"
+        }
+      }
+    },
+    "SwaggerAllUserResponse": {
+      "description": "UserResponse It is the response of the all users information",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/UserResponse"
+        }
+      }
+    },
+    "SwaggerDataLogin": {
+      "description": "DataLogin It is the response of the login information.",
+      "schema": {
+        "$ref": "#/definitions/DataLogin"
+      }
+    },
+    "SwaggerErrorMessage": {
+      "description": "ErrorMessage standardized error response.",
+      "schema": {
+        "$ref": "#/definitions/ErrorMessage"
+      }
+    },
+    "SwaggerFoodResponse": {
+      "description": "FoodResponse It is the response of the food information",
+      "schema": {
+        "$ref": "#/definitions/FoodResponse"
+      }
+    },
+    "SwaggerMap": {
+      "description": "Map is a convenient way to create objects of unknown types.",
+      "schema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object"
+        }
+      }
+    },
+    "SwaggerSuccessfullyMessage": {
+      "description": "SuccessfullyMessage structure that returns successfully",
+      "schema": {
+        "$ref": "#/definitions/SuccessfullyMessage"
+      }
+    },
+    "SwaggerUserResponse": {
+      "description": "UserResponse It is the response of the user's information",
+      "schema": {
+        "$ref": "#/definitions/UserResponse"
+      }
+    }
+  }
+}

@@ -73,9 +73,9 @@ func TestUserRouter_GetAllUser(t *testing.T) {
 		mockRepository := &repoMock.UserRepository{}
 
 		testUserHandler := &v1.UserRouter{Repo: mockRepository}
-		mockRepository.On("GetAllUser", mock.Anything, mock.Anything).Return(nil, errors.New("error trace test"))
+		mockRepository.On("GetAllUserHandler", mock.Anything, mock.Anything).Return(nil, errors.New("error trace test"))
 
-		testUserHandler.GetAllUser(response, request)
+		testUserHandler.GetAllUserHandler(response, request)
 		mockRepository.AssertExpectations(tt)
 	})
 
@@ -86,9 +86,9 @@ func TestUserRouter_GetAllUser(t *testing.T) {
 		mockRepository := &repoMock.UserRepository{}
 
 		testUserHandler := &v1.UserRouter{Repo: mockRepository}
-		mockRepository.On("GetAllUser", mock.Anything).Return(dataUserResponse(), nil)
+		mockRepository.On("GetAllUserHandler", mock.Anything).Return(dataUserResponse(), nil)
 
-		testUserHandler.GetAllUser(response, request)
+		testUserHandler.GetAllUserHandler(response, request)
 		mockRepository.AssertExpectations(tt)
 	})
 }

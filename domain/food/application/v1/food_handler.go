@@ -26,8 +26,24 @@ func NewFoodHandler(db *database.Data) *FoodRouter {
 	}
 }
 
-// GetAllFood response all the food.
-func (ur *FoodRouter) GetAllFood(w http.ResponseWriter, r *http.Request) {
+
+// swagger:route GET /foods  Food getAllFood
+//
+// GetAllFoodHandler.
+// Response all the food
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerAllFoodResponse
+//		  401: SwaggerErrorMessage
+//		  404: SwaggerErrorMessage
+//
+// GetAllFoodHandler response all the food.
+func (ur *FoodRouter) GetAllFoodHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	foods, err := ur.Repo.GetAllFood(ctx)
@@ -44,6 +60,23 @@ func (ur *FoodRouter) GetAllFood(w http.ResponseWriter, r *http.Request) {
 	_ = middleware.JSON(w, r, http.StatusOK, foods)
 }
 
+
+// swagger:route GET /foods/{id}  Food idFoodPath
+//
+// GetOneFoodHandler.
+// Response one food by id
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerFoodResponse
+//		  400: SwaggerErrorMessage
+//		  401: SwaggerErrorMessage
+//		  404: SwaggerErrorMessage
+//
 // GetOneHandler response one food by id.
 func (ur *FoodRouter) GetOneHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
@@ -62,6 +95,23 @@ func (ur *FoodRouter) GetOneHandler(w http.ResponseWriter, r *http.Request) {
 	_ = middleware.JSON(w, r, http.StatusOK, userResult)
 }
 
+
+// swagger:route GET /foods/user/{id}  Food idFoodByUserPath
+//
+// GetOneByUserHandler.
+// Response one food by user id
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerFoodResponse
+//		  400: SwaggerErrorMessage
+//		  401: SwaggerErrorMessage
+//		  404: SwaggerErrorMessage
+//
 // GetOneByUserHandler response one food by user id.
 func (ur *FoodRouter) GetOneByUserHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
@@ -80,6 +130,27 @@ func (ur *FoodRouter) GetOneByUserHandler(w http.ResponseWriter, r *http.Request
 	_ = middleware.JSON(w, r, http.StatusOK, userResult)
 }
 
+
+// swagger:route POST /foods Food foodRequest
+//
+// CreateHandler.
+// Create a new food
+//
+//     consumes:
+//     - application/json
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        201: SwaggerFoodResponse
+//		  400: SwaggerErrorMessage
+//		  401: SwaggerErrorMessage
+//		  409: SwaggerErrorMessage
+//		  422: SwaggerErrorMessage
+//
 // CreateHandler Create a new food.
 func (ur *FoodRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	var now time.Time
@@ -112,6 +183,27 @@ func (ur *FoodRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	_ = middleware.JSON(w, r, http.StatusCreated, result)
 }
 
+
+// swagger:route PUT /foods/{id}  Food foodUpdateRequest
+//
+// UpdateHandler.
+// Update a stored food by id
+//
+//     consumes:
+//     - application/json
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerFoodResponse
+//		  400: SwaggerErrorMessage
+//		  401: SwaggerErrorMessage
+//		  409: SwaggerErrorMessage
+//		  422: SwaggerErrorMessage
+//
 // UpdateHandler update a stored food by id.
 func (ur *FoodRouter) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	var now time.Time
@@ -155,6 +247,23 @@ func (ur *FoodRouter) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	_ = middleware.JSON(w, r, http.StatusOK, result)
 }
 
+
+// swagger:route DELETE /foods/{id}  Food idFoodDeletePath
+//
+// DeleteHandler.
+// Remove a food by id
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerSuccessfullyMessage
+//		  400: SwaggerErrorMessage
+//		  401: SwaggerErrorMessage
+//		  404: SwaggerErrorMessage
+//
 // DeleteHandler Remove a food by ID.
 func (ur *FoodRouter) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
@@ -170,5 +279,5 @@ func (ur *FoodRouter) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = middleware.JSON(w, r, http.StatusNoContent, middleware.Map{})
+	_ = middleware.JSONMessages(w, r, http.StatusNoContent, "Successfully delete food")
 }

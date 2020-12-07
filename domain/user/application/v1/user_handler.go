@@ -27,8 +27,23 @@ func NewUserHandler(db *database.Data) *UserRouter {
 	}
 }
 
-// GetAllUser response all the users.
-func (ur *UserRouter) GetAllUser(w http.ResponseWriter, r *http.Request) {
+// swagger:route GET /users  User getAllUser
+//
+// GetAllUserHandler.
+// Returns all user in the database
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerAllUserResponse
+//		  401: SwaggerErrorMessage
+//		  404: SwaggerErrorMessage
+//
+// GetAllUserHandler response all the users.
+func (ur *UserRouter) GetAllUserHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	users, err := ur.Repo.GetAllUser(ctx)
@@ -45,6 +60,23 @@ func (ur *UserRouter) GetAllUser(w http.ResponseWriter, r *http.Request) {
 	_ = middleware.JSON(w, r, http.StatusOK, users)
 }
 
+
+// swagger:route GET /users/{id}  User idUserPath
+//
+// GetOneHandler.
+// Response one user by id
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerUserResponse
+//		  400: SwaggerErrorMessage
+//		  401: SwaggerErrorMessage
+//		  404: SwaggerErrorMessage
+//
 // GetOneHandler response one user by id.
 func (ur *UserRouter) GetOneHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
@@ -63,6 +95,26 @@ func (ur *UserRouter) GetOneHandler(w http.ResponseWriter, r *http.Request) {
 	_ = middleware.JSON(w, r, http.StatusOK, userResult)
 }
 
+
+// swagger:route POST /users User userRequest
+//
+// CreateHandler.
+// Create a new user
+//
+//     consumes:
+//     - application/json
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        201: SwaggerUserResponse
+//		  400: SwaggerErrorMessage
+//		  409: SwaggerErrorMessage
+//		  422: SwaggerErrorMessage
+//
 // CreateHandler Create a new user.
 func (ur *UserRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	var now time.Time
@@ -70,7 +122,7 @@ func (ur *UserRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		_ = middleware.HTTPError(w, r, http.StatusUnprocessableEntity, err.Error())
+		_ = middleware.HTTPError(w, r, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -101,6 +153,26 @@ func (ur *UserRouter) CreateHandler(w http.ResponseWriter, r *http.Request) {
 	_ = middleware.JSON(w, r, http.StatusCreated, result)
 }
 
+// swagger:route PUT /users/{id}  User userUpdateRequest
+//
+// UpdateHandler.
+// Update a stored user by id
+//
+//     consumes:
+//     - application/json
+//
+//     produces:
+//      - application/json
+//
+//	   schemes: http, https
+//
+//     responses:
+//        200: SwaggerUserResponse
+//		  400: SwaggerErrorMessage
+//		  401: SwaggerErrorMessage
+//		  409: SwaggerErrorMessage
+//		  422: SwaggerErrorMessage
+//
 // UpdateHandler update a stored user by id.
 func (ur *UserRouter) UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	var now time.Time

@@ -7,16 +7,73 @@ import (
 	"time"
 )
 
+// Data of User
+// swagger:model
 type User struct {
 	ID           string     `json:"id,omitempty"`
+	// Required: true
 	Names        string     `json:"names,omitempty"`
+	// Required: true
 	LastNames    string     `json:"last_names,omitempty"`
+	// Required: true
 	Email        string     `json:"email,omitempty"`
+	// Required: true
 	Password     string     `json:"password,omitempty"`
 	PasswordHash string     `json:"-"`
-	CreatedAt    time.Time  `json:"created_at,omitempty"`
-	UpdatedAt    time.Time  `json:"updated_at,omitempty"`
-	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
+	CreatedAt    time.Time  `json:"-"`
+	UpdatedAt    time.Time  `json:"-"`
+	DeletedAt    *time.Time `json:"-"`
+}
+
+// Information from user
+// swagger:parameters getAllUser
+type SwaggerAllUserRequest struct {
+	// type: apiKey
+	// in: header
+	// Required: true
+	Authorization string
+}
+
+// Information from user
+// swagger:parameters userRequest
+type SwaggerUserRequest struct {
+	// in: body
+	Body User
+}
+
+// Information from user for update
+// swagger:parameters userUpdateRequest
+type SwaggerUserUpdateRequest struct {
+	// type: apiKey
+	// in: header
+	// Required: true
+	Authorization string
+
+	// in: path
+	// Required: true
+	ID string
+
+	// in: body
+	Body struct {
+		// Required: true
+		Names     string `json:"names,omitempty"`
+		// Required: true
+		LastNames string `json:"last_names,omitempty"`
+		// Required: true
+		Email     string `json:"email,omitempty"`
+	}
+}
+
+// swagger:parameters idUserPath
+type SwaggerUser struct {
+	// type: apiKey
+	// in: header
+	// Required: true
+	Authorization string
+
+	// in: path
+	// Required: true
+	ID string
 }
 
 // HashPassword generates a hash of the password and places the result in PasswordHash.

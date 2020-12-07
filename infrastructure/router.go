@@ -26,7 +26,7 @@ func Routes(conn *database.Data) http.Handler {
 func routesUser(handler *v1User.UserRouter) http.Handler {
 	router := chi.NewRouter()
 
-	router.With(middleware.AuthMiddleware).Get("/", handler.GetAllUser)
+	router.With(middleware.AuthMiddleware).Get("/", handler.GetAllUserHandler)
 	router.With(middleware.AuthMiddleware).Get("/{id}", handler.GetOneHandler)
 	router.Post("/", handler.CreateHandler)
 	router.With(middleware.AuthMiddleware).Put("/{id}", handler.UpdateHandler)
@@ -38,7 +38,7 @@ func routesUser(handler *v1User.UserRouter) http.Handler {
 func routesFood(handler *v1Food.FoodRouter) http.Handler {
 	router := chi.NewRouter()
 
-	router.Get("/", handler.GetAllFood)
+	router.Get("/", handler.GetAllFoodHandler)
 	router.Get("/{id}", handler.GetOneHandler)
 	router.Get("/user/{id}", handler.GetOneByUserHandler)
 	router.With(middleware.MaxSizeAllowed).Post("/", handler.CreateHandler)
