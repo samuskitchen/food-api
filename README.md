@@ -1,5 +1,5 @@
 # Food Api
-This project was based on an article from a [blog](https://dev.to/stevensunflash/using-domain-driven-design-ddd-in-golang-3ee5) but changes were made to the structure, tests and libraries
+This project was based on an article from a [blog](https://dev.to/stevensunflash/using-domain-driven-design-ddd-in-golang-3ee5) but changes were made to the structure, tests and libraries. Also try to implement DDD in the project, this would be a simple implementation of DDD for Golang
 
 The following technologies were used in this project:
 - [Golang 1.15](https://golang.org/dl/)
