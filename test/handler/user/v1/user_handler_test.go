@@ -21,7 +21,7 @@ import (
 
 // dataUser is data for test
 func dataUser() []model.User {
-	now := time.Now().Truncate(time.Second).Truncate(time.Millisecond).Truncate(time.Microsecond)
+	now := time.Now()
 
 	return []model.User{
 		{
@@ -73,7 +73,7 @@ func TestUserRouter_GetAllUser(t *testing.T) {
 		mockRepository := &repoMock.UserRepository{}
 
 		testUserHandler := &v1.UserRouter{Repo: mockRepository}
-		mockRepository.On("GetAllUserHandler", mock.Anything, mock.Anything).Return(nil, errors.New("error trace test"))
+		mockRepository.On("GetAllUser", mock.Anything, mock.Anything).Return(nil, errors.New("error trace test"))
 
 		testUserHandler.GetAllUserHandler(response, request)
 		mockRepository.AssertExpectations(tt)
@@ -86,7 +86,7 @@ func TestUserRouter_GetAllUser(t *testing.T) {
 		mockRepository := &repoMock.UserRepository{}
 
 		testUserHandler := &v1.UserRouter{Repo: mockRepository}
-		mockRepository.On("GetAllUserHandler", mock.Anything).Return(dataUserResponse(), nil)
+		mockRepository.On("GetAllUser", mock.Anything).Return(dataUserResponse(), nil)
 
 		testUserHandler.GetAllUserHandler(response, request)
 		mockRepository.AssertExpectations(tt)
@@ -209,7 +209,6 @@ func TestUserRouter_CreateHandler(t *testing.T) {
 
 		testUserHandler.CreateHandler(response, request)
 		mockRepository.AssertExpectations(tt)
-
 	})
 }
 

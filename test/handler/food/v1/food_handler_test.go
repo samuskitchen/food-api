@@ -77,7 +77,7 @@ func TestFoodRouter_GetAllFood(t *testing.T) {
 		mockRepository := &repoMock.FoodRepository{}
 
 		testFoodHandler := &v1.FoodRouter{Repo: mockRepository}
-		mockRepository.On("GetAllFoodHandler", mock.Anything, mock.Anything).Return(nil, errors.New("error trace test"))
+		mockRepository.On("GetAllFood", mock.Anything, mock.Anything).Return(nil, errors.New("error trace test"))
 
 		testFoodHandler.GetAllFoodHandler(response, request)
 		mockRepository.AssertExpectations(tt)
@@ -90,7 +90,7 @@ func TestFoodRouter_GetAllFood(t *testing.T) {
 		mockRepository := &repoMock.FoodRepository{}
 
 		testFoodHandler := &v1.FoodRouter{Repo: mockRepository}
-		mockRepository.On("GetAllFoodHandler", mock.Anything).Return(dataFoodResponse(), nil)
+		mockRepository.On("GetAllFood", mock.Anything).Return(dataFoodResponse(), nil)
 
 		testFoodHandler.GetAllFoodHandler(response, request)
 		mockRepository.AssertExpectations(tt)

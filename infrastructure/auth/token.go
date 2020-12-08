@@ -20,6 +20,7 @@ func NewToken() *Token {
 type TokenInterface interface {
 	CreateToken(userid string) (*model.TokenDetails, error)
 	ExtractTokenMetadata(*http.Request) (*model.AccessDetails, error)
+	VerifyAndValidateRefreshToken(refreshToken string) (*jwt.Token, error)
 }
 
 //Token implements the TokenInterface
@@ -134,7 +135,7 @@ func VerifyToken(r *http.Request) (*jwt.Token, error) {
 
 // VerifyAndValidateRefreshToken verify refresh token and its signature and
 // validate that it is a valid system refresh token
-func VerifyAndValidateRefreshToken(refreshToken string) (*jwt.Token, error) {
+func (t *Token)  VerifyAndValidateRefreshToken(refreshToken string) (*jwt.Token, error) {
 	token, err := jwt.Parse(refreshToken, func(token *jwt.Token) (interface{}, error) {
 
 		//Make sure that the token method conform to "SigningMethodHMAC"

@@ -167,7 +167,7 @@ func (lr *LoginRouter) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//verify the refresh Token and is refresh Token valid?
-	refreshToken, err := auth.VerifyAndValidateRefreshToken(dataLogin.RefreshToken)
+	refreshToken, err := lr.Token.VerifyAndValidateRefreshToken(dataLogin.RefreshToken)
 	if err != nil {
 		//any error may be due to refreshToken expiration
 		_ = middleware.HTTPError(w, r, http.StatusUnauthorized, err.Error())

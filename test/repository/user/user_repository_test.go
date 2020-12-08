@@ -240,7 +240,6 @@ func Test_sqlUserRepo_GetUserByEmailAndPassword(t *testing.T) {
 		assert.NoError(tt, err)
 		assert.NotNil(tt, userResult)
 	})
-
 }
 
 func Test_sqlUserRepo_CreateUser(t *testing.T) {
