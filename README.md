@@ -161,3 +161,40 @@ go test -v -coverprofile=coverage_integration.out -coverpkg=./domain/food/applic
 
 go tool cover -html=coverage_integration.out
 ````
+
+## Quick Run Project
+First clone the repo then go to food-api folder. After that build your image and run by docker. Make sure you have docker in your machine.
+
+```
+git clone https://github.com/samuskitchen/food-api.git
+
+cd food-api
+```
+
+#### Start Api
+```
+docker-compose up -d --build
+```
+
+#### Down Api
+```
+docker-compose down --remove-orphans --volumes
+```
+
+## Run Project in Server AWS
+These are the commands to execute and in the following order
+
+```
+cd installers/
+```
+
+This command starts the app
+```
+./installFood-Api.sh
+```
+
+This command starts the swagger server
+```
+./swaggerFood-Api.sh &
+disown
+```
