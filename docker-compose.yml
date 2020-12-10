@@ -1,0 +1,51 @@
+version: '3.7'
+services:
+
+  postgres_food:
+    image: postgres:12
+    container_name: postgres_food
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=food-api
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data_base_init.sql:/docker-entrypoint-initdb.d/data_base_init.sql
+
+  redis_db:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  app:
+    container_name: food_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    restart: on-failure
+    image: food_api
+    links:
+      - postgres_food
+      - redis_db
+    depends_on:
+      - postgres_food
+      - redis_db
+    environment:
+      - "API_PORT=8888"
+      - "DB_HOST=postgres_food"
+      - "DB_DRIVER=postgres"
+      - "DB_PASSWORD=admin"
+      - "DB_NAME=food-api"
+      - "DB_PORT=5432"
+      - "DB_USER=postgres"
+      - "SCRIPTS_PATH=file:///migrations"
+      - "ACCESS_SECRET=98hbun98h"
+      - "REFRESH_SECRET=786dfdbjhsb"
+      - "MAX_SIZE=8192000"
+      - "REDIS_HOST=redis_db"
+      - "REDIS_PORT=6379"
+      - "REDIS_PASSWORD="
