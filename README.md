@@ -90,6 +90,11 @@ go test -v -coverprofile=coverage.out -coverpkg=./domain/... ./test/...
 go tool cover -html=coverage.out
 ```
 
+This command gets the total coverage of the project
+```
+go tool cover -func coverage.out
+```
+
 #### Execute All Test Integration 
 This is the command to run the black box tests, and the test report command
 ```

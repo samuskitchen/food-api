@@ -164,6 +164,9 @@ func TestLoginRouter_LoginHandler(t *testing.T) {
 	t.Run("Validate Login Handler", func(tt *testing.T) {
 
 		var userTest = dataUser()
+		userTest.Names = ""
+		userTest.LastNames = ""
+		userTest.Password = ""
 		userTest.Email = ""
 
 		marshal, err := json.Marshal(userTest)
