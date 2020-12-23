@@ -45,15 +45,8 @@ func testMain(m *testing.M) int {
 		log.Fatal(err)
 	}
 
-	//redis details
-	redisHost := os.Getenv("REDIS_HOST")
-	redisPort := os.Getenv("REDIS_PORT")
-	redisPassword := os.Getenv("REDIS_PASSWORD")
-
-	redis, err := data.NewRedisDB(redisHost, redisPort, redisPassword)
-	if err != nil {
-		log.Fatal(err)
-	}
+	//Connect redis
+	redis := data.NewRedisDB()
 
 	// Run Server for test
 	port := os.Getenv("DAEMON_PORT")

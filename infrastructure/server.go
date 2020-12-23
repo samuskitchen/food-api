@@ -3,14 +3,19 @@ package infrastructure
 import (
 	"context"
 	"food-api/infrastructure/database"
+	"food-api/infrastructure/middleware"
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
-	"food-api/infrastructure/middleware"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/dimiro1/health"
+	"github.com/dimiro1/health/db"
+	redisHealth "github.com/dimiro1/health/redis"
+	"github.com/dimiro1/health/url"
 )
 
 // Server is a base Server configuration.
@@ -39,6 +44,12 @@ func newServer(port string, conn *database.Data, redis *database.RedisService) *
 	router.Use(chiMiddleware.Recoverer)
 	router.Use(middleware.CORSMiddleware)
 
+	//default path to be used in the health checker
+	router.Mount("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+	}))
+
+	router.Mount("/health", healChecker(conn, redis))
 	router.Mount("/api", RoutesLogin(conn, redis))
 	router.Mount("/api/v1", Routes(conn))
 
@@ -51,6 +62,22 @@ func newServer(port string, conn *database.Data, redis *database.RedisService) *
 	}
 
 	return &Server{s}
+}
+
+func healChecker(conn *database.Data, redis *database.RedisService) http.Handler {
+	router := chi.NewRouter()
+
+	postgresql := db.NewPostgreSQLChecker(conn.DB)
+	timeout := 5 * time.Second
+
+	handler := health.NewHandler()
+	handler.AddChecker("Go", url.NewCheckerWithTimeout("http://localhost:8888/", timeout))
+	handler.AddChecker("PostgreSQL", postgresql)
+	handler.AddChecker("Redis", redisHealth.NewChecker("tcp", ":6379"))
+
+	router.Handle("/", handler)
+
+	return router
 }
 
 // Start the server.

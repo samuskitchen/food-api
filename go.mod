@@ -9,11 +9,11 @@ require (
 	github.com/aws/aws-sdk-go v1.36.0
 	github.com/badoux/checkmail v1.2.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/dimiro1/health v0.0.0-20191019130555-c5cbb4d46ffc
 	github.com/go-chi/chi v1.5.1
 	github.com/go-chi/cors v1.1.1
 	github.com/go-redis/redis/v8 v8.4.2
 	github.com/golang-migrate/migrate/v4 v4.14.1
-	github.com/gomodule/redigo v1.8.3 // indirect
 	github.com/google/go-cmp v0.5.3
 	github.com/google/uuid v1.1.2
 	github.com/hashicorp/errwrap v1.1.0 // indirect
